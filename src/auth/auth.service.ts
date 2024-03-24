@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { UserMapper } from '../user/user.mapper';
 import { APIUser } from '../user/types/APIUser';
@@ -7,6 +7,8 @@ import { CryptoService } from '../crypto/crypto.service';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
@@ -14,6 +16,8 @@ export class AuthService {
   ) {}
 
   async validateUser(username: string, pass: string): Promise<APIUser | null> {
+    this.logger.log(`Validating user ${username}`);
+
     const user = await this.userService.findByUsername(username);
 
     if (
