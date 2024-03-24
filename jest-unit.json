@@ -1,0 +1,28 @@
+{
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
+  "rootDir": "src",
+  "testRegex": ".*\\.spec\\.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "collectCoverageFrom": [
+    "**/*.(t|j)s"
+  ],
+  "coveragePathIgnorePatterns": [
+    "node_modules",
+    "test-config",
+    ".module.ts",
+    ".entity.ts",
+    ".dto.ts",
+    ".strategy.ts",
+    "auth.guard.ts",
+    "src/main.ts",
+    ".mock.ts"
+  ],
+  "coverageDirectory": "../coverage-unit",
+  "testEnvironment": "node"
+}

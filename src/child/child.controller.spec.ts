@@ -40,7 +40,7 @@ describe('ChildController', () => {
   it('should create a new child', async () => {
     const createChildSpy = jest
       .spyOn(service, 'createChild')
-      .mockResolvedValueOnce({} as Child);
+      .mockResolvedValueOnce('');
 
     await controller.createChild(
       {
@@ -56,6 +56,22 @@ describe('ChildController', () => {
       parentId: mockJWTUser.id,
       name: 'John',
     });
+  });
+
+  it('should return the id of the created child', async () => {
+    jest.spyOn(service, 'createChild').mockResolvedValueOnce('1');
+
+    const childId = await controller.createChild(
+      {
+        user: mockJWTUser,
+        params: {},
+      },
+      {
+        name: 'John',
+      },
+    );
+
+    expect(childId).toEqual({ id: '1' });
   });
 
   it('should get a child by id', async () => {
@@ -127,7 +143,7 @@ describe('ChildController', () => {
   it('should edit a child', async () => {
     const editChildSpy = jest
       .spyOn(service, 'editChild')
-      .mockResolvedValueOnce({} as Child);
+      .mockResolvedValueOnce();
 
     await controller.editChild('1', {
       name: 'John',
@@ -137,5 +153,15 @@ describe('ChildController', () => {
       id: '1',
       name: 'John',
     });
+  });
+
+  it('should delete a child', async () => {
+    const deleteChildSpy = jest
+      .spyOn(service, 'deleteChild')
+      .mockResolvedValueOnce();
+
+    await controller.deleteChild('1');
+
+    expect(deleteChildSpy).toHaveBeenCalledWith('1');
   });
 });

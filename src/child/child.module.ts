@@ -9,5 +9,6 @@ import { ChildController } from './child.controller';
   imports: [TypeOrmModule.forFeature([Child]), UserModule],
   providers: [ChildService],
   controllers: [ChildController],
+  exports: [ChildService],
 })
 export class ChildModule {}

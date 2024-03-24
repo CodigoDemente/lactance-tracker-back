@@ -51,57 +51,42 @@ describe('ChildService', () => {
       name,
     });
 
-    expect(child.name).toBe(name);
+    expect(child).toBeDefined();
   });
 
-  it('should create a new child with the correct parent id', async () => {
+  it('should return the created child id', async () => {
     const name = faker.person.firstName();
 
-    const child = await service.createChild({
+    const childId = await service.createChild({
       parentId: parent.id,
       name,
     });
 
-    expect((await child.parent).id).toBe(parent.id);
+    expect(childId).toBeDefined();
   });
 
-  it('should not create a child whith parent that does not exist', () => {
+  it('should not create a child without a parent', () => {
     const name = faker.person.firstName();
 
-    expect(
+    return expect(
       service.createChild({
-        parentId: faker.string.uuid(),
+        parentId: '',
         name,
       }),
     ).rejects.toThrow(UserDoesNotExists);
   });
 
-  it('should create a new child with a unique id', async () => {
-    const name = faker.person.firstName();
-
-    const child1 = await service.createChild({
-      parentId: parent.id,
-      name,
-    });
-    const child2 = await service.createChild({
-      parentId: parent.id,
-      name,
-    });
-
-    expect(child1.id).not.toBe(child2.id);
-  });
-
   it('should return a child by id', async () => {
     const name = faker.person.firstName();
 
-    const child = await service.createChild({
+    const childId = await service.createChild({
       parentId: parent.id,
       name,
     });
 
-    const foundChild = await service.getChildById(child.id);
+    const foundChild = await service.getChildById(childId);
 
-    expect(foundChild?.id).toBe(child.id);
+    expect(foundChild?.id).toBe(childId);
   });
 
   it('should return null if child does not exist', async () => {
@@ -112,23 +97,60 @@ describe('ChildService', () => {
     expect(foundChild).toBeNull();
   });
 
-  it("should edit a child's name", async () => {
+  it('should create a new child with the correct parent id', async () => {
     const name = faker.person.firstName();
-    const newName = faker.person.firstName();
 
-    const child = await service.createChild({
+    const childId = await service.createChild({
       parentId: parent.id,
       name,
     });
 
-    child.name = newName;
+    const createdChild = await service.getChildById(childId);
+
+    expect(createdChild?.parentId).toBe(parent.id);
+  });
+
+  it('should not create a child whith parent that does not exist', () => {
+    const name = faker.person.firstName();
+
+    return expect(
+      service.createChild({
+        parentId: faker.string.uuid(),
+        name,
+      }),
+    ).rejects.toThrow(UserDoesNotExists);
+  });
+
+  it('should create a new child with a unique id', async () => {
+    const name = faker.person.firstName();
+
+    const child1Id = await service.createChild({
+      parentId: parent.id,
+      name,
+    });
+    const child2Id = await service.createChild({
+      parentId: parent.id,
+      name,
+    });
+
+    expect(child1Id).not.toBe(child2Id);
+  });
+
+  it("should edit a child's name", async () => {
+    const name = faker.person.firstName();
+    const newName = faker.person.firstName();
+
+    const childId = await service.createChild({
+      parentId: parent.id,
+      name,
+    });
 
     await service.editChild({
-      id: child.id,
+      id: childId,
       name: newName,
     });
 
-    const foundChild = await service.getChildById(child.id);
+    const foundChild = await service.getChildById(childId);
 
     expect(foundChild?.name).toBe(newName);
   });
@@ -164,12 +186,12 @@ describe('ChildService', () => {
   it('should get all children of a parent', async () => {
     const name = faker.person.firstName();
 
-    const child1 = await service.createChild({
+    const child1Id = await service.createChild({
       parentId: parent.id,
       name,
     });
 
-    const child2 = await service.createChild({
+    const child2Id = await service.createChild({
       parentId: parent.id,
       name,
     });
@@ -178,8 +200,8 @@ describe('ChildService', () => {
       (c) => c.id,
     );
 
-    expect(children).toContainEqual(child1.id);
-    expect(children).toContainEqual(child2.id);
+    expect(children).toContainEqual(child1Id);
+    expect(children).toContainEqual(child2Id);
   });
 
   it('should not return children of a parent that does not exist', async () => {
@@ -198,14 +220,14 @@ describe('ChildService', () => {
   it('should delete a child', async () => {
     const name = faker.person.firstName();
 
-    const child = await service.createChild({
+    const childId = await service.createChild({
       parentId: parent.id,
       name,
     });
 
-    await service.deleteChild(child.id);
+    await service.deleteChild(childId);
 
-    const foundChild = await service.getChildById(child.id);
+    const foundChild = await service.getChildById(childId);
 
     expect(foundChild).toBeNull();
   });

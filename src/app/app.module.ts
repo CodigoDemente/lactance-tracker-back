@@ -6,6 +6,7 @@ import { AuthModule } from '../auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ChildModule } from '../child/child.module';
+import { MealModule } from '../meal/meal.module';
 
 @Module({
   imports: [
@@ -23,13 +24,15 @@ import { ChildModule } from '../child/child.module';
     UserModule,
     AuthModule,
     ChildModule,
+    MealModule,
   ],
   controllers: [],
   providers: [
     {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard,
+      useExisting: JwtAuthGuard, // Need to use useExisting instead of useClass for overriding it in tests
     },
+    JwtAuthGuard,
   ],
 })
 export class AppModule {}
