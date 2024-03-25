@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { DateTime } from 'luxon';
@@ -5,6 +6,7 @@ import { DateTime } from 'luxon';
 class CreateEditMealAPIDto {
   @Transform(({ value }) => DateTime.fromISO(value).toUTC())
   @IsOptional()
+  @ApiProperty({ type: String, format: 'date-time' })
   date?: DateTime;
 }
 

@@ -13,8 +13,10 @@ import { CreateUserDto } from './user.dto';
 import { UserService } from './user.service';
 import { JWTUser } from './types/JWTUser';
 import { SkipJwt } from '../decorators/public.decorator';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller()
+@ApiTags('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

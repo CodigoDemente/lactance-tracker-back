@@ -18,8 +18,10 @@ import { HasAccessToChildGuardGuard } from './guards/has-access-to-child-guard.g
 import { ChildMapper } from './child.mapper';
 import { UserIsSameAsLoggedGuard } from '../auth/guards/user-is-same-as-logged.guard';
 import { ChildDoesNotExists } from './errors/ChildDoesNotExists';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('/parents/:parentId/childs')
+@ApiTags('childs')
 export class ChildController {
   constructor(private readonly childService: ChildService) {}
 

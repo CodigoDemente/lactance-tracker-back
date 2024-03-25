@@ -8,10 +8,20 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ChildModule } from '../child/child.module';
 import { MealModule } from '../meal/meal.module';
 import { LoggerModule } from 'nestjs-pino';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    ThrottlerModule.forRoot({
+      skipIf: () => process.env?.NODE_ENV !== 'production',
+      throttlers: [
+        {
+          ttl: 1000,
+          limit: 10,
+        },
+      ],
+    }),
     LoggerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
@@ -33,8 +43,6 @@ import { LoggerModule } from 'nestjs-pino';
             },
           };
         }
-
-        console.log(options);
 
         return options;
       },
@@ -59,9 +67,12 @@ import { LoggerModule } from 'nestjs-pino';
   providers: [
     {
       provide: APP_GUARD,
-      useExisting: JwtAuthGuard, // Need to use useExisting instead of useClass for overriding it in tests
+      useClass: JwtAuthGuard,
     },
-    JwtAuthGuard,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}

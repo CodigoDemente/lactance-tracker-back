@@ -15,8 +15,10 @@ import { CreateMealAPIDto, EditMealAPIDto } from './meal.dto';
 import { MealMapper } from './meal.mapper';
 import { MealDoesNotExists } from './errors/MealDoesNotExists';
 import { HasAccessToChildGuardGuard } from '../child/guards/has-access-to-child-guard.guard';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('/childs/:childId/meals')
+@ApiTags('meals')
 export class MealController {
   constructor(private readonly mealService: MealService) {}
 
