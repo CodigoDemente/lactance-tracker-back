@@ -62,6 +62,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
             username: configService.get('DATABASE_USER'),
             password: configService.get('DATABASE_PASSWORD'),
             database: configService.get('DATABASE'),
+            ssl: configService.get('DATABASE_SSL') === 'true',
             autoLoadEntities: true,
             synchronize: true,
           };
