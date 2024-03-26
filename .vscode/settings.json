@@ -1,0 +1,6 @@
+{
+  "conventionalCommits.scopes": [
+    "user",
+    "infra"
+  ]
+}
