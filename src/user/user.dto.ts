@@ -9,7 +9,7 @@ import {
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
-  @Length(4, 20)
+  @Length(4, 64)
   @Matches(/^[A-Za-z0-9_\-\.]+$/, {
     message:
       'username must contain only letters, numbers, underscores, and hyphens',
