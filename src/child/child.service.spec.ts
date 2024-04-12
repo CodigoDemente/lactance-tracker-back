@@ -183,6 +183,29 @@ describe('ChildService', () => {
     expect(foundChild).toBeNull();
   });
 
+  it('should return list of children in the correct format', async () => {
+    const name = faker.person.firstName();
+
+    await service.createChild({
+      parentId: parent.id,
+      name,
+    });
+
+    const children = await service.getChildrenByParentId(parent.id);
+
+    expect(children).toMatchObject({
+      page: expect.any(Number),
+      total: expect.any(Number),
+      items: expect.arrayContaining([
+        {
+          id: expect.any(String),
+          name: expect.any(String),
+          parentId: expect.any(String),
+        },
+      ]),
+    });
+  });
+
   it('should get all children of a parent', async () => {
     const name = faker.person.firstName();
 
@@ -196,7 +219,7 @@ describe('ChildService', () => {
       name,
     });
 
-    const children = (await service.getChildrenByParentId(parent.id)).map(
+    const children = (await service.getChildrenByParentId(parent.id)).items.map(
       (c) => c.id,
     );
 
@@ -214,7 +237,7 @@ describe('ChildService', () => {
 
     const children = await service.getChildrenByParentId(faker.string.uuid());
 
-    expect(children).toHaveLength(0);
+    expect(children.items).toHaveLength(0);
   });
 
   it('should delete a child', async () => {

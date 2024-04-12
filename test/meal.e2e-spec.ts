@@ -40,7 +40,7 @@ describe('MealController (e2e)', () => {
     await app.init();
 
     // Create a user
-    await request(app.getHttpServer()).post('/users').send({
+    await request(app.getHttpServer()).post('/api/v1/users').send({
       email: userData.email,
       username: userData.username,
       password: userData.password,
@@ -48,7 +48,7 @@ describe('MealController (e2e)', () => {
 
     // Login
     const loginResponse = await request(app.getHttpServer())
-      .post('/auth/login')
+      .post('/api/v1/auth/login')
       .send({
         username: userData.username,
         password: userData.password,
@@ -57,14 +57,14 @@ describe('MealController (e2e)', () => {
     token = loginResponse.body.access_token;
 
     const userProfile = await request(app.getHttpServer())
-      .get('/profile')
+      .get('/api/v1/profile')
       .set('Authorization', `Bearer ${token}`);
 
     userId = userProfile.body.id;
 
     // Create a child
     const childResponse = await request(app.getHttpServer())
-      .post(`/parents/${userId}/childs`)
+      .post(`/api/v1/parents/${userId}/children`)
       .set('Authorization', `Bearer ${token}`)
       .send({
         name: 'child-name',
@@ -73,10 +73,10 @@ describe('MealController (e2e)', () => {
     childId = childResponse.body.id;
   });
 
-  describe('/childs/:childId/meals (POST)', () => {
+  describe('/api/v1/children/:childId/meals (POST)', () => {
     it('should create a meal', () => {
       return request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'breast',
@@ -86,7 +86,7 @@ describe('MealController (e2e)', () => {
 
     it('should return id of the created meal', async () => {
       const response = await request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'breast',
@@ -97,7 +97,7 @@ describe('MealController (e2e)', () => {
 
     it('should create a meal with date', () => {
       return request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'breast',
@@ -108,7 +108,7 @@ describe('MealController (e2e)', () => {
 
     it('should return 401 when not authenticated', () => {
       return request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .send({
           type: 'breast',
         })
@@ -117,7 +117,7 @@ describe('MealController (e2e)', () => {
 
     it('should return 400 when type is not provided', () => {
       return request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({})
         .expect(400);
@@ -125,7 +125,7 @@ describe('MealController (e2e)', () => {
 
     it('should return 400 when type is not valid', () => {
       return request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'invalid',
@@ -135,7 +135,7 @@ describe('MealController (e2e)', () => {
 
     it('should return 404 when child does not exist', () => {
       return request(app.getHttpServer())
-        .post(`/childs/invalid/meals`)
+        .post(`/api/v1/children/invalid/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'breast',
@@ -151,14 +151,14 @@ describe('MealController (e2e)', () => {
       };
 
       // Create a new user
-      await request(app.getHttpServer()).post('/users').send({
+      await request(app.getHttpServer()).post('/api/v1/users').send({
         email: newUserData.email,
         username: newUserData.username,
         password: newUserData.password,
       });
 
       const loginResponse = await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/api/v1/auth/login')
         .send({
           username: newUserData.username,
           password: newUserData.password,
@@ -167,7 +167,7 @@ describe('MealController (e2e)', () => {
       const newToken = loginResponse.body.access_token;
 
       return request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${newToken}`)
         .send({
           type: 'breast',
@@ -176,10 +176,10 @@ describe('MealController (e2e)', () => {
     });
   });
 
-  describe('/childs/:childId/meals/:mealId (GET)', () => {
+  describe('/api/v1/children/:childId/meals/:mealId (GET)', () => {
     it('should return a meal', async () => {
       const mealResponse = await request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'breast',
@@ -188,14 +188,14 @@ describe('MealController (e2e)', () => {
       const mealId = mealResponse.body.id;
 
       return request(app.getHttpServer())
-        .get(`/childs/${childId}/meals/${mealId}`)
+        .get(`/api/v1/children/${childId}/meals/${mealId}`)
         .set('Authorization', `Bearer ${token}`)
         .expect(200);
     });
 
     it('should return 401 when not authenticated', async () => {
       const mealResponse = await request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'breast',
@@ -204,27 +204,31 @@ describe('MealController (e2e)', () => {
       const mealId = mealResponse.body.id;
 
       return request(app.getHttpServer())
-        .get(`/childs/${childId}/meals/${mealId}`)
+        .get(`/api/v1/children/${childId}/meals/${mealId}`)
         .expect(401);
     });
 
     it('should return bad request when id is not an uuid', () => {
       return request(app.getHttpServer())
-        .get(`/childs/${childId}/meals/invalid`)
+        .get(`/api/v1/children/${childId}/meals/invalid`)
         .set('Authorization', `Bearer ${token}`)
         .expect(400);
     });
 
     it('should return 404 when meal does not exist', () => {
       return request(app.getHttpServer())
-        .get(`/childs/${childId}/meals/00000000-0000-0000-0000-000000000000`)
+        .get(
+          `/api/v1/children/${childId}/meals/00000000-0000-0000-0000-000000000000`,
+        )
         .set('Authorization', `Bearer ${token}`)
         .expect(404);
     });
 
     it('should return 404 when child does not exist', () => {
       return request(app.getHttpServer())
-        .get(`/childs/invalid/meals/00000000-0000-0000-0000-000000000000`)
+        .get(
+          `/api/v1/children/invalid/meals/00000000-0000-0000-0000-000000000000`,
+        )
         .set('Authorization', `Bearer ${token}`)
         .expect(404);
     });
@@ -237,14 +241,14 @@ describe('MealController (e2e)', () => {
       };
 
       // Create a new user
-      await request(app.getHttpServer()).post('/users').send({
+      await request(app.getHttpServer()).post('/api/v1/users').send({
         email: newUserData.email,
         username: newUserData.username,
         password: newUserData.password,
       });
 
       const loginResponse = await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/api/v1/auth/login')
         .send({
           username: newUserData.username,
           password: newUserData.password,
@@ -253,7 +257,7 @@ describe('MealController (e2e)', () => {
       const newToken = loginResponse.body.access_token;
 
       const mealResponse = await request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'breast',
@@ -262,30 +266,30 @@ describe('MealController (e2e)', () => {
       const mealId = mealResponse.body.id;
 
       return request(app.getHttpServer())
-        .get(`/childs/${childId}/meals/${mealId}`)
+        .get(`/api/v1/children/${childId}/meals/${mealId}`)
         .set('Authorization', `Bearer ${newToken}`)
         .expect(404);
     });
   });
 
-  describe('/childs/:childId/meals (GET)', () => {
+  describe('/api/v1/children/:childId/meals (GET)', () => {
     it('should return meals for a child', async () => {
       await request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'breast',
         });
 
       return request(app.getHttpServer())
-        .get(`/childs/${childId}/meals`)
+        .get(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .expect(200);
     });
 
     it('should edit date of a meal', async () => {
       const mealResponse = await request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'breast',
@@ -294,7 +298,7 @@ describe('MealController (e2e)', () => {
       const mealId = mealResponse.body.id;
 
       return request(app.getHttpServer())
-        .patch(`/childs/${childId}/meals/${mealId}`)
+        .patch(`/api/v1/children/${childId}/meals/${mealId}`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           date: '2022-01-01T00:00:00.000Z',
@@ -304,13 +308,13 @@ describe('MealController (e2e)', () => {
 
     it('should return 401 when not authenticated', () => {
       return request(app.getHttpServer())
-        .get(`/childs/${childId}/meals`)
+        .get(`/api/v1/children/${childId}/meals`)
         .expect(401);
     });
 
     it('should return 404 when child does not exist', () => {
       return request(app.getHttpServer())
-        .get(`/childs/00000000-0000-0000-0000-000000000000/meals`)
+        .get(`/api/v1/children/00000000-0000-0000-0000-000000000000/meals`)
         .set('Authorization', `Bearer ${token}`)
         .expect(404);
     });
@@ -323,14 +327,14 @@ describe('MealController (e2e)', () => {
       };
 
       // Create a new user
-      await request(app.getHttpServer()).post('/users').send({
+      await request(app.getHttpServer()).post('/api/v1/users').send({
         email: newUserData.email,
         username: newUserData.username,
         password: newUserData.password,
       });
 
       const loginResponse = await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/api/v1/auth/login')
         .send({
           username: newUserData.username,
           password: newUserData.password,
@@ -339,21 +343,21 @@ describe('MealController (e2e)', () => {
       const newToken = loginResponse.body.access_token;
 
       return request(app.getHttpServer())
-        .get(`/childs/${childId}/meals`)
+        .get(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${newToken}`)
         .expect(404);
     });
 
     it('should return meals for a child in descending order', async () => {
       await request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'breast',
         });
 
       const mealResponse = await request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'bottle',
@@ -362,17 +366,17 @@ describe('MealController (e2e)', () => {
       const mealId = mealResponse.body.id;
 
       const mealsResponse = await request(app.getHttpServer())
-        .get(`/childs/${childId}/meals`)
+        .get(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`);
 
       expect(mealsResponse.body[0].id).toBe(mealId);
     });
   });
 
-  describe('/childs/:childId/meals/:mealId (PATCH)', () => {
+  describe('/api/v1/children/:childId/meals/:mealId (PATCH)', () => {
     it('should edit a meal', async () => {
       const mealResponse = await request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'breast',
@@ -381,7 +385,7 @@ describe('MealController (e2e)', () => {
       const mealId = mealResponse.body.id;
 
       return request(app.getHttpServer())
-        .patch(`/childs/${childId}/meals/${mealId}`)
+        .patch(`/api/v1/children/${childId}/meals/${mealId}`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'bottle',
@@ -391,7 +395,7 @@ describe('MealController (e2e)', () => {
 
     it('should return 401 when not authenticated', async () => {
       const mealResponse = await request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'breast',
@@ -400,7 +404,7 @@ describe('MealController (e2e)', () => {
       const mealId = mealResponse.body.id;
 
       return request(app.getHttpServer())
-        .patch(`/childs/${childId}/meals/${mealId}`)
+        .patch(`/api/v1/children/${childId}/meals/${mealId}`)
         .send({
           type: 'bottle',
         })
@@ -409,7 +413,7 @@ describe('MealController (e2e)', () => {
 
     it('should return 400 when type is not valid', async () => {
       const mealResponse = await request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'breast',
@@ -418,7 +422,7 @@ describe('MealController (e2e)', () => {
       const mealId = mealResponse.body.id;
 
       return request(app.getHttpServer())
-        .patch(`/childs/${childId}/meals/${mealId}`)
+        .patch(`/api/v1/children/${childId}/meals/${mealId}`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'invalid',
@@ -428,7 +432,9 @@ describe('MealController (e2e)', () => {
 
     it('should return 404 when child does not exist', () => {
       return request(app.getHttpServer())
-        .patch(`/childs/${faker.string.uuid()}/meals/${faker.string.uuid()}`)
+        .patch(
+          `/api/v1/children/${faker.string.uuid()}/meals/${faker.string.uuid()}`,
+        )
         .set('Authorization', `Bearer ${token}`)
         .expect(404);
     });
@@ -441,14 +447,14 @@ describe('MealController (e2e)', () => {
       };
 
       // Create a new user
-      await request(app.getHttpServer()).post('/users').send({
+      await request(app.getHttpServer()).post('/api/v1/users').send({
         email: newUserData.email,
         username: newUserData.username,
         password: newUserData.password,
       });
 
       const loginResponse = await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/api/v1/auth/login')
         .send({
           username: newUserData.username,
           password: newUserData.password,
@@ -457,7 +463,7 @@ describe('MealController (e2e)', () => {
       const newToken = loginResponse.body.access_token;
 
       const mealResponse = await request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'breast',
@@ -466,7 +472,7 @@ describe('MealController (e2e)', () => {
       const mealId = mealResponse.body.id;
 
       return request(app.getHttpServer())
-        .patch(`/childs/${childId}/meals/${mealId}`)
+        .patch(`/api/v1/children/${childId}/meals/${mealId}`)
         .set('Authorization', `Bearer ${newToken}`)
         .send({
           type: 'bottle',
@@ -476,7 +482,7 @@ describe('MealController (e2e)', () => {
 
     it('should return 404 when meal does not exist', () => {
       return request(app.getHttpServer())
-        .patch(`/childs/${childId}/meals/${faker.string.uuid()}`)
+        .patch(`/api/v1/children/${childId}/meals/${faker.string.uuid()}`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'bottle',
@@ -486,7 +492,7 @@ describe('MealController (e2e)', () => {
 
     it('should return 400 when neither type nor date is provided', async () => {
       const mealResponse = await request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'breast',
@@ -495,17 +501,17 @@ describe('MealController (e2e)', () => {
       const mealId = mealResponse.body.id;
 
       return request(app.getHttpServer())
-        .patch(`/childs/${childId}/meals/${mealId}`)
+        .patch(`/api/v1/children/${childId}/meals/${mealId}`)
         .set('Authorization', `Bearer ${token}`)
         .send({})
         .expect(400);
     });
   });
 
-  describe('/childs/:childId/meals/:mealId (DELETE)', () => {
+  describe('/api/v1/children/:childId/meals/:mealId (DELETE)', () => {
     it('should delete a meal', async () => {
       const mealResponse = await request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'breast',
@@ -514,14 +520,14 @@ describe('MealController (e2e)', () => {
       const mealId = mealResponse.body.id;
 
       return request(app.getHttpServer())
-        .delete(`/childs/${childId}/meals/${mealId}`)
+        .delete(`/api/v1/children/${childId}/meals/${mealId}`)
         .set('Authorization', `Bearer ${token}`)
         .expect(200);
     });
 
     it('should return 401 when not authenticated', async () => {
       const mealResponse = await request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'breast',
@@ -530,13 +536,15 @@ describe('MealController (e2e)', () => {
       const mealId = mealResponse.body.id;
 
       return request(app.getHttpServer())
-        .delete(`/childs/${childId}/meals/${mealId}`)
+        .delete(`/api/v1/children/${childId}/meals/${mealId}`)
         .expect(401);
     });
 
     it('should return 404 when child does not exist', () => {
       return request(app.getHttpServer())
-        .delete(`/childs/${faker.string.uuid()}/meals/${faker.string.uuid()}`)
+        .delete(
+          `/api/v1/children/${faker.string.uuid()}/meals/${faker.string.uuid()}`,
+        )
         .set('Authorization', `Bearer ${token}`)
         .expect(404);
     });
@@ -549,14 +557,14 @@ describe('MealController (e2e)', () => {
       };
 
       // Create a new user
-      await request(app.getHttpServer()).post('/users').send({
+      await request(app.getHttpServer()).post('/api/v1/users').send({
         email: newUserData.email,
         username: newUserData.username,
         password: newUserData.password,
       });
 
       const loginResponse = await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/api/v1/auth/login')
         .send({
           username: newUserData.username,
           password: newUserData.password,
@@ -565,7 +573,7 @@ describe('MealController (e2e)', () => {
       const newToken = loginResponse.body.access_token;
 
       const mealResponse = await request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'breast',
@@ -574,28 +582,28 @@ describe('MealController (e2e)', () => {
       const mealId = mealResponse.body.id;
 
       return request(app.getHttpServer())
-        .delete(`/childs/${childId}/meals/${mealId}`)
+        .delete(`/api/v1/children/${childId}/meals/${mealId}`)
         .set('Authorization', `Bearer ${newToken}`)
         .expect(404);
     });
 
     it('should return 404 when meal does not exist', () => {
       return request(app.getHttpServer())
-        .delete(`/childs/${childId}/meals/${faker.string.uuid()}`)
+        .delete(`/api/v1/children/${childId}/meals/${faker.string.uuid()}`)
         .set('Authorization', `Bearer ${token}`)
         .expect(404);
     });
 
     it('should return 400 when id is not an uuid', () => {
       return request(app.getHttpServer())
-        .delete(`/childs/${childId}/meals/invalid`)
+        .delete(`/api/v1/children/${childId}/meals/invalid`)
         .set('Authorization', `Bearer ${token}`)
         .expect(400);
     });
 
     it('should return 404 when getting a meal after deleting it', async () => {
       const mealResponse = await request(app.getHttpServer())
-        .post(`/childs/${childId}/meals`)
+        .post(`/api/v1/children/${childId}/meals`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           type: 'breast',
@@ -604,11 +612,11 @@ describe('MealController (e2e)', () => {
       const mealId = mealResponse.body.id;
 
       await request(app.getHttpServer())
-        .delete(`/childs/${childId}/meals/${mealId}`)
+        .delete(`/api/v1/children/${childId}/meals/${mealId}`)
         .set('Authorization', `Bearer ${token}`);
 
       return request(app.getHttpServer())
-        .get(`/childs/${childId}/meals/${mealId}`)
+        .get(`/api/v1/children/${childId}/meals/${mealId}`)
         .set('Authorization', `Bearer ${token}`)
         .expect(404);
     });

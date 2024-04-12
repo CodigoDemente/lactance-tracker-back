@@ -17,7 +17,7 @@ import { MealDoesNotExists } from './errors/MealDoesNotExists';
 import { HasAccessToChildGuardGuard } from '../child/guards/has-access-to-child-guard.guard';
 import { ApiTags } from '@nestjs/swagger';
 
-@Controller('/childs/:childId/meals')
+@Controller('/children/:childId/meals')
 @ApiTags('meals')
 export class MealController {
   constructor(private readonly mealService: MealService) {}

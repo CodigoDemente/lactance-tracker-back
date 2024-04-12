@@ -32,7 +32,7 @@ describe('UserController (e2e)', () => {
     await app.init();
   });
 
-  describe('/users (POST)', () => {
+  describe('/api/v1/users (POST)', () => {
     it('should return 201 when creating a user', async () => {
       const userData = {
         email: faker.internet.email(),
@@ -41,7 +41,7 @@ describe('UserController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .post('/users')
+        .post('/api/v1/users')
         .send(userData)
         .expect(201);
     });
@@ -54,12 +54,12 @@ describe('UserController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .post('/users')
+        .post('/api/v1/users')
         .send(userData)
         .expect(201);
 
       await request(app.getHttpServer())
-        .post('/users')
+        .post('/api/v1/users')
         .send(userData)
         .expect(400);
     });
@@ -72,12 +72,12 @@ describe('UserController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .post('/users')
+        .post('/api/v1/users')
         .send(userData)
         .expect(201);
 
       await request(app.getHttpServer())
-        .post('/users')
+        .post('/api/v1/users')
         .send(userData)
         .expect(400);
     });
@@ -90,7 +90,7 @@ describe('UserController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .post('/users')
+        .post('/api/v1/users')
         .send(userData)
         .expect(400);
     });
@@ -103,7 +103,7 @@ describe('UserController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .post('/users')
+        .post('/api/v1/users')
         .send(userData)
         .expect(400);
     });
@@ -116,7 +116,7 @@ describe('UserController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .post('/users')
+        .post('/api/v1/users')
         .send(userData)
         .expect(400);
     });
@@ -129,7 +129,7 @@ describe('UserController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .post('/users')
+        .post('/api/v1/users')
         .send(userData)
         .expect(400);
     });
@@ -142,7 +142,7 @@ describe('UserController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .post('/users')
+        .post('/api/v1/users')
         .send(userData)
         .expect(400);
     });
@@ -155,7 +155,7 @@ describe('UserController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .post('/users')
+        .post('/api/v1/users')
         .send(userData)
         .expect(400);
     });
@@ -168,7 +168,7 @@ describe('UserController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .post('/users')
+        .post('/api/v1/users')
         .send(userData)
         .expect(400);
     });
@@ -180,7 +180,7 @@ describe('UserController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .post('/users')
+        .post('/api/v1/users')
         .send(userData)
         .expect(400);
     });
@@ -192,7 +192,7 @@ describe('UserController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .post('/users')
+        .post('/api/v1/users')
         .send(userData)
         .expect(400);
     });
@@ -204,7 +204,7 @@ describe('UserController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .post('/users')
+        .post('/api/v1/users')
         .send(userData)
         .expect(400);
     });
@@ -217,12 +217,12 @@ describe('UserController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .post('/users')
+        .post('/api/v1/users')
         .send(userData)
         .expect(201);
 
       await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/api/v1/auth/login')
         .send(userData)
         .expect(201);
     });

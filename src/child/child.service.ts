@@ -6,6 +6,9 @@ import { CreateChildDto, EditChildDto } from './child.dto';
 import { UserService } from '../user/user.service';
 import { UserDoesNotExists } from '../user/errors/UserDoesNotExists';
 import { ChildDoesNotExists } from './errors/ChildDoesNotExists';
+import { ChildMapper } from './child.mapper';
+import { APIChild } from './types/APIChild';
+import { Pagination } from '../app/types/Pagination.type';
 
 @Injectable()
 export class ChildService {
@@ -45,12 +48,18 @@ export class ChildService {
     await this.childRepository.update(child.id, { name: editChildDto.name });
   }
 
-  async getChildrenByParentId(parentId: string): Promise<Child[]> {
-    return this.childRepository.findBy({
+  async getChildrenByParentId(parentId: string): Promise<Pagination<APIChild>> {
+    const children = await this.childRepository.findBy({
       parent: {
         id: parentId,
       },
     });
+
+    return {
+      page: 1,
+      total: children.length,
+      items: children.map(ChildMapper.toInfrasctructure),
+    };
   }
 
   async deleteChild(id: string): Promise<void> {

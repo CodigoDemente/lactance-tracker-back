@@ -7,6 +7,7 @@ import { UserService } from '../user/user.service';
 import { stubChild } from '../mocks/child.mock';
 import { ChildDoesNotExists } from './errors/ChildDoesNotExists';
 import { stubJWTUser } from '../mocks/user.mock';
+import { ChildMapper } from './child.mapper';
 
 describe('ChildController', () => {
   let controller: ChildController;
@@ -101,7 +102,11 @@ describe('ChildController', () => {
   it('should get children by parent id', async () => {
     const getChildrenByParentIdSpy = jest
       .spyOn(service, 'getChildrenByParentId')
-      .mockResolvedValueOnce([stubChild()]);
+      .mockResolvedValueOnce({
+        page: 1,
+        total: 1,
+        items: [stubChild()],
+      });
 
     await controller.getChildrenByParentId({
       user: mockJWTUser,
@@ -122,22 +127,26 @@ describe('ChildController', () => {
   it('should return children in correct format', async () => {
     const children = [stubChild()];
 
-    jest
-      .spyOn(service, 'getChildrenByParentId')
-      .mockResolvedValueOnce(children);
+    jest.spyOn(service, 'getChildrenByParentId').mockResolvedValueOnce({
+      page: 1,
+      total: 1,
+      items: children.map(ChildMapper.toInfrasctructure),
+    });
 
     const returnedChildren = await controller.getChildrenByParentId({
       user: mockJWTUser,
       params: {},
     });
 
-    expect(returnedChildren).toEqual(
-      children.map((child) => ({
+    expect(returnedChildren).toEqual({
+      page: 1,
+      total: 1,
+      items: children.map((child) => ({
         id: child.id,
         name: child.name,
         parentId: child.parentId,
       })),
-    );
+    });
   });
 
   it('should edit a child', async () => {

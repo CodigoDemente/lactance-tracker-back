@@ -37,24 +37,24 @@ describe('AuthController (e2e)', () => {
     await app.init();
 
     // Create a user
-    await request(app.getHttpServer()).post('/users').send({
+    await request(app.getHttpServer()).post('/api/v1/users').send({
       email: userData.email,
       username: userData.username,
       password: userData.password,
     });
   });
 
-  describe('/auth/login (POST)', () => {
+  describe('/api/v1/auth/login (POST)', () => {
     it('should return 201 when login a valid user', async () => {
       await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/api/v1/auth/login')
         .send(userData)
         .expect(201);
     });
 
     it('should return an access toke when login a valid user', async () => {
       const response = await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/api/v1/auth/login')
         .send(userData)
         .expect(201);
 
@@ -63,7 +63,7 @@ describe('AuthController (e2e)', () => {
 
     it('should return 401 when login an invalid user', async () => {
       await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/api/v1/auth/login')
         .send({
           email: faker.internet.email(),
           password: faker.internet.password(),

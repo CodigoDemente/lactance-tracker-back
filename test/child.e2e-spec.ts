@@ -39,7 +39,7 @@ describe('ChildController (e2e)', () => {
     await app.init();
 
     // Create a user
-    await request(app.getHttpServer()).post('/users').send({
+    await request(app.getHttpServer()).post('/api/v1/users').send({
       email: userData.email,
       username: userData.username,
       password: userData.password,
@@ -47,7 +47,7 @@ describe('ChildController (e2e)', () => {
 
     // Login
     const loginResponse = await request(app.getHttpServer())
-      .post('/auth/login')
+      .post('/api/v1/auth/login')
       .send({
         username: userData.username,
         password: userData.password,
@@ -56,20 +56,20 @@ describe('ChildController (e2e)', () => {
     token = loginResponse.body.access_token;
 
     const userProfile = await request(app.getHttpServer())
-      .get('/profile')
+      .get('/api/v1/profile')
       .set('Authorization', `Bearer ${token}`);
 
     userId = userProfile.body.id;
   });
 
-  describe('/parents/:parentId/childs (POST)', () => {
+  describe('/api/v1/parents/:parentId/children (POST)', () => {
     it('should return 201 when creating a child', async () => {
       const childData = {
         name: faker.person.firstName(),
       };
 
       await request(app.getHttpServer())
-        .post(`/parents/${userId}/childs`)
+        .post(`/api/v1/parents/${userId}/children`)
         .set('Authorization', `Bearer ${token}`)
         .send(childData)
         .expect(201);
@@ -81,7 +81,7 @@ describe('ChildController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .post(`/parents/${userId}/childs`)
+        .post(`/api/v1/parents/${userId}/children`)
         .set('Authorization', `Bearer ${token}`)
         .send(childData)
         .expect(400);
@@ -93,7 +93,7 @@ describe('ChildController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .post(`/parents/${userId}/childs`)
+        .post(`/api/v1/parents/${userId}/children`)
         .send(childData)
         .expect(401);
     });
@@ -104,7 +104,7 @@ describe('ChildController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .post(`/parents/${faker.string.uuid()}/childs`)
+        .post(`/api/v1/parents/${faker.string.uuid()}/children`)
         .set('Authorization', `Bearer ${token}`)
         .send(childData)
         .expect(403);
@@ -116,21 +116,21 @@ describe('ChildController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .post(`/parents/${faker.string.uuid()}/childs`)
+        .post(`/api/v1/parents/${faker.string.uuid()}/children`)
         .set('Authorization', `Bearer ${token}`)
         .send(childData)
         .expect(403);
     });
   });
 
-  describe('/parents/:parentId/childs/:childId (PATCH)', () => {
+  describe('/api/v1/parents/:parentId/children/:childId (PATCH)', () => {
     it('should return 200 when editing a child', async () => {
       const childData = {
         name: faker.person.firstName(),
       };
 
       const childResponse = await request(app.getHttpServer())
-        .post(`/parents/${userId}/childs`)
+        .post(`/api/v1/parents/${userId}/children`)
         .set('Authorization', `Bearer ${token}`)
         .send(childData);
 
@@ -139,7 +139,7 @@ describe('ChildController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .patch(`/parents/${userId}/childs/${childResponse.body.id}`)
+        .patch(`/api/v1/parents/${userId}/children/${childResponse.body.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send(editedChildData)
         .expect(200);
@@ -151,7 +151,7 @@ describe('ChildController (e2e)', () => {
       };
 
       const childResponse = await request(app.getHttpServer())
-        .post(`/parents/${userId}/childs`)
+        .post(`/api/v1/parents/${userId}/children`)
         .set('Authorization', `Bearer ${token}`)
         .send(childData);
 
@@ -160,7 +160,7 @@ describe('ChildController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .patch(`/parents/${userId}/childs/${childResponse.body.id}`)
+        .patch(`/api/v1/parents/${userId}/children/${childResponse.body.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send(editedChildData)
         .expect(400);
@@ -172,7 +172,7 @@ describe('ChildController (e2e)', () => {
       };
 
       const childResponse = await request(app.getHttpServer())
-        .post(`/parents/${userId}/childs`)
+        .post(`/api/v1/parents/${userId}/children`)
         .set('Authorization', `Bearer ${token}`)
         .send(childData);
 
@@ -181,7 +181,7 @@ describe('ChildController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .patch(`/parents/${userId}/childs/${childResponse.body.id}`)
+        .patch(`/api/v1/parents/${userId}/children/${childResponse.body.id}`)
         .send(editedChildData)
         .expect(401);
     });
@@ -192,7 +192,7 @@ describe('ChildController (e2e)', () => {
       };
 
       const childResponse = await request(app.getHttpServer())
-        .post(`/parents/${userId}/childs`)
+        .post(`/api/v1/parents/${userId}/children`)
         .set('Authorization', `Bearer ${token}`)
         .send(childData);
 
@@ -202,7 +202,7 @@ describe('ChildController (e2e)', () => {
 
       await request(app.getHttpServer())
         .patch(
-          `/parents/${faker.string.uuid()}/childs/${childResponse.body.id}`,
+          `/api/v1/parents/${faker.string.uuid()}/children/${childResponse.body.id}`,
         )
         .set('Authorization', `Bearer ${token}`)
         .send(editedChildData)
@@ -215,7 +215,7 @@ describe('ChildController (e2e)', () => {
       };
 
       const childResponse = await request(app.getHttpServer())
-        .post(`/parents/${userId}/childs`)
+        .post(`/api/v1/parents/${userId}/children`)
         .set('Authorization', `Bearer ${token}`)
         .send(childData);
 
@@ -230,7 +230,7 @@ describe('ChildController (e2e)', () => {
         password: faker.internet.password(),
       };
 
-      await request(app.getHttpServer()).post('/users').send({
+      await request(app.getHttpServer()).post('/api/v1/users').send({
         email: anotherUser.email,
         username: anotherUser.username,
         password: anotherUser.password,
@@ -238,7 +238,7 @@ describe('ChildController (e2e)', () => {
 
       // Login
       const anotherLoginResponse = await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/api/v1/auth/login')
         .send({
           username: anotherUser.username,
           password: anotherUser.password,
@@ -247,7 +247,7 @@ describe('ChildController (e2e)', () => {
       const newToken = anotherLoginResponse.body.access_token;
 
       await request(app.getHttpServer())
-        .patch(`/parents/${userId}/childs/${childResponse.body.id}`)
+        .patch(`/api/v1/parents/${userId}/children/${childResponse.body.id}`)
         .set('Authorization', `Bearer ${newToken}`)
         .send(editedChildData)
         .expect(403);
@@ -259,7 +259,7 @@ describe('ChildController (e2e)', () => {
       };
 
       const childResponse = await request(app.getHttpServer())
-        .post(`/parents/${userId}/childs`)
+        .post(`/api/v1/parents/${userId}/children`)
         .set('Authorization', `Bearer ${token}`)
         .send(childData);
 
@@ -269,7 +269,7 @@ describe('ChildController (e2e)', () => {
 
       await request(app.getHttpServer())
         .patch(
-          `/parents/${faker.string.uuid()}/childs/${childResponse.body.id}`,
+          `/api/v1/parents/${faker.string.uuid()}/children/${childResponse.body.id}`,
         )
         .set('Authorization', `Bearer ${token}`)
         .send(editedChildData)
@@ -282,26 +282,26 @@ describe('ChildController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .patch(`/parents/${userId}/childs/${faker.string.uuid()}`)
+        .patch(`/api/v1/parents/${userId}/children/${faker.string.uuid()}`)
         .set('Authorization', `Bearer ${token}`)
         .send(editedChildData)
         .expect(404);
     });
   });
 
-  describe('/parents/:parentId/childs/:childId (GET)', () => {
+  describe('/api/v1/parents/:parentId/children/:childId (GET)', () => {
     it('should return 200 when getting a child', async () => {
       const childData = {
         name: faker.person.firstName(),
       };
 
       const childResponse = await request(app.getHttpServer())
-        .post(`/parents/${userId}/childs`)
+        .post(`/api/v1/parents/${userId}/children`)
         .set('Authorization', `Bearer ${token}`)
         .send(childData);
 
       await request(app.getHttpServer())
-        .get(`/parents/${userId}/childs/${childResponse.body.id}`)
+        .get(`/api/v1/parents/${userId}/children/${childResponse.body.id}`)
         .set('Authorization', `Bearer ${token}`)
         .expect(200);
     });
@@ -312,12 +312,12 @@ describe('ChildController (e2e)', () => {
       };
 
       const childResponse = await request(app.getHttpServer())
-        .post(`/parents/${userId}/childs`)
+        .post(`/api/v1/parents/${userId}/children`)
         .set('Authorization', `Bearer ${token}`)
         .send(childData);
 
       await request(app.getHttpServer())
-        .get(`/parents/${userId}/childs/${childResponse.body.id}`)
+        .get(`/api/v1/parents/${userId}/children/${childResponse.body.id}`)
         .expect(401);
     });
 
@@ -327,12 +327,14 @@ describe('ChildController (e2e)', () => {
       };
 
       const childResponse = await request(app.getHttpServer())
-        .post(`/parents/${userId}/childs`)
+        .post(`/api/v1/parents/${userId}/children`)
         .set('Authorization', `Bearer ${token}`)
         .send(childData);
 
       await request(app.getHttpServer())
-        .get(`/parents/${faker.string.uuid()}/childs/${childResponse.body.id}`)
+        .get(
+          `/api/v1/parents/${faker.string.uuid()}/children/${childResponse.body.id}`,
+        )
         .set('Authorization', `Bearer ${token}`)
         .expect(403);
     });
@@ -343,37 +345,39 @@ describe('ChildController (e2e)', () => {
       };
 
       const childResponse = await request(app.getHttpServer())
-        .post(`/parents/${userId}/childs`)
+        .post(`/api/v1/parents/${userId}/children`)
         .set('Authorization', `Bearer ${token}`)
         .send(childData);
 
       await request(app.getHttpServer())
-        .get(`/parents/${faker.string.uuid()}/childs/${childResponse.body.id}`)
+        .get(
+          `/api/v1/parents/${faker.string.uuid()}/children/${childResponse.body.id}`,
+        )
         .set('Authorization', `Bearer ${token}`)
         .expect(403);
     });
 
     it('should return 404 when getting a non-existing child', async () => {
       await request(app.getHttpServer())
-        .get(`/parents/${userId}/childs/${faker.string.uuid()}`)
+        .get(`/api/v1/parents/${userId}/children/${faker.string.uuid()}`)
         .set('Authorization', `Bearer ${token}`)
         .expect(404);
     });
   });
 
-  describe('/parents/:parentId/childs/:childId (DELETE)', () => {
+  describe('/api/v1/parents/:parentId/children/:childId (DELETE)', () => {
     it('should return 200 when deleting a child', async () => {
       const childData = {
         name: faker.person.firstName(),
       };
 
       const childResponse = await request(app.getHttpServer())
-        .post(`/parents/${userId}/childs`)
+        .post(`/api/v1/parents/${userId}/children`)
         .set('Authorization', `Bearer ${token}`)
         .send(childData);
 
       await request(app.getHttpServer())
-        .delete(`/parents/${userId}/childs/${childResponse.body.id}`)
+        .delete(`/api/v1/parents/${userId}/children/${childResponse.body.id}`)
         .set('Authorization', `Bearer ${token}`)
         .expect(200);
     });
@@ -384,12 +388,12 @@ describe('ChildController (e2e)', () => {
       };
 
       const childResponse = await request(app.getHttpServer())
-        .post(`/parents/${userId}/childs`)
+        .post(`/api/v1/parents/${userId}/children`)
         .set('Authorization', `Bearer ${token}`)
         .send(childData);
 
       await request(app.getHttpServer())
-        .delete(`/parents/${userId}/childs/${childResponse.body.id}`)
+        .delete(`/api/v1/parents/${userId}/children/${childResponse.body.id}`)
         .expect(401);
     });
 
@@ -399,13 +403,13 @@ describe('ChildController (e2e)', () => {
       };
 
       const childResponse = await request(app.getHttpServer())
-        .post(`/parents/${userId}/childs`)
+        .post(`/api/v1/parents/${userId}/children`)
         .set('Authorization', `Bearer ${token}`)
         .send(childData);
 
       await request(app.getHttpServer())
         .delete(
-          `/parents/${faker.string.uuid()}/childs/${childResponse.body.id}`,
+          `/api/v1/parents/${faker.string.uuid()}/children/${childResponse.body.id}`,
         )
         .set('Authorization', `Bearer ${token}`)
         .expect(403);
@@ -417,13 +421,13 @@ describe('ChildController (e2e)', () => {
       };
 
       const childResponse = await request(app.getHttpServer())
-        .post(`/parents/${userId}/childs`)
+        .post(`/api/v1/parents/${userId}/children`)
         .set('Authorization', `Bearer ${token}`)
         .send(childData);
 
       await request(app.getHttpServer())
         .delete(
-          `/parents/${faker.string.uuid()}/childs/${childResponse.body.id}`,
+          `/api/v1/parents/${faker.string.uuid()}/children/${childResponse.body.id}`,
         )
         .set('Authorization', `Bearer ${token}`)
         .expect(403);
@@ -431,7 +435,7 @@ describe('ChildController (e2e)', () => {
 
     it('should return 404 when deleting a non-existing child', async () => {
       await request(app.getHttpServer())
-        .delete(`/parents/${userId}/childs/${faker.string.uuid()}`)
+        .delete(`/api/v1/parents/${userId}/children/${faker.string.uuid()}`)
         .set('Authorization', `Bearer ${token}`)
         .expect(404);
     });

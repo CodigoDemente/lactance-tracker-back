@@ -20,8 +20,8 @@ import { UserIsSameAsLoggedGuard } from '../auth/guards/user-is-same-as-logged.g
 import { ChildDoesNotExists } from './errors/ChildDoesNotExists';
 import { ApiTags } from '@nestjs/swagger';
 
-@Controller('/parents/:parentId/childs')
-@ApiTags('childs')
+@Controller('parents/:parentId/children')
+@ApiTags('children')
 export class ChildController {
   constructor(private readonly childService: ChildService) {}
 
@@ -42,9 +42,7 @@ export class ChildController {
   async getChildrenByParentId(@Request() req: RequestData) {
     const user = req.user as JWTUser;
 
-    const children = await this.childService.getChildrenByParentId(user.id);
-
-    return children.map(ChildMapper.toInfrasctructure);
+    return await this.childService.getChildrenByParentId(user.id);
   }
 
   @Post()

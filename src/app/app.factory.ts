@@ -17,6 +17,8 @@ export class AppFactory {
     app.useLogger(app.get(Logger));
     app.useGlobalInterceptors(new LoggerErrorInterceptor());
 
+    app.setGlobalPrefix('api/v1');
+
     const config = new DocumentBuilder()
       .setTitle('Lactance Tracker API')
       .setDescription(
@@ -24,7 +26,7 @@ export class AppFactory {
       )
       .setVersion('1.0')
       .addTag('auth')
-      .addTag('childs')
+      .addTag('children')
       .addTag('meals')
       .addTag('users')
       .build();
