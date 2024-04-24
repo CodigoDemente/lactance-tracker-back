@@ -25,6 +25,7 @@ export class EditMealAPIDto extends CreateEditMealAPIDto {
 
   @IsString()
   @IsOptional()
+  @Transform(({ value }) => value.toLowerCase())
   @IsEnum(['s', 'm', 'l'])
   size?: string;
 }

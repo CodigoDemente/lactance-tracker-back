@@ -6,6 +6,7 @@ export class MealMapper {
     return {
       id: meal.id,
       type: meal.type,
+      size: meal.size,
       childId: meal.childId,
       date: meal.date.toISO(),
     };

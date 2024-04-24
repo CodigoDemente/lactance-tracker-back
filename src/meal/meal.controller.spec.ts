@@ -91,6 +91,7 @@ describe('MealController', () => {
     expect(returnedMeal).toEqual({
       id: meal.id,
       type: meal.type,
+      size: meal.size,
       date: meal.date.toISO(),
       childId: meal.childId,
     });
@@ -204,6 +205,7 @@ describe('MealController', () => {
         type: meal.type,
         date: meal.date.toISO(),
         childId: meal.childId,
+        size: meal.size,
       },
     ]);
   });
