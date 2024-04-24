@@ -22,6 +22,11 @@ export class EditMealAPIDto extends CreateEditMealAPIDto {
   @IsOptional()
   @IsEnum(['breast', 'bottle'])
   type?: string;
+
+  @IsString()
+  @IsOptional()
+  @IsEnum(['s', 'm', 'l'])
+  size?: string;
 }
 
 export type CreateMealDto = {
@@ -34,4 +39,5 @@ export type EditMealDto = {
   id: string;
   type?: string;
   date?: DateTime;
+  size?: string;
 };

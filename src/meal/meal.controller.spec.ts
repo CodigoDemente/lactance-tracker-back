@@ -132,6 +132,19 @@ describe('MealController', () => {
     });
   });
 
+  it('should edit meal with size', async () => {
+    const editMealSpy = jest.spyOn(service, 'editMeal').mockResolvedValueOnce();
+
+    await controller.editMeal('1', {
+      size: 's',
+    });
+
+    expect(editMealSpy).toHaveBeenCalledWith({
+      id: '1',
+      size: 's',
+    });
+  });
+
   it('should throw bad request exception if no data is provided', async () => {
     return expect(controller.editMeal('1', {})).rejects.toThrow(
       BadRequestException,

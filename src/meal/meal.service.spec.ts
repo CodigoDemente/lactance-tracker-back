@@ -398,6 +398,47 @@ describe('MealService', () => {
     expect(editedMeal?.date).toEqual(meal?.date);
   });
 
+  it('should edit a meal size', async () => {
+    const mealId = await service.addMeal({
+      type: 'bottle',
+      childId: child.id,
+    });
+
+    await service.editMeal({
+      id: mealId,
+      type: 'bottle',
+      size: 's',
+    });
+
+    const editedMeal = await service.getMealById(mealId);
+
+    expect(editedMeal?.size).toBe('s');
+  });
+
+  it('should not change the size if not supplied', async () => {
+    const mealId = await service.addMeal({
+      type: 'bottle',
+      childId: child.id,
+    });
+
+    await service.editMeal({
+      id: mealId,
+      size: 's',
+    });
+
+    const meal = await service.getMealById(mealId);
+
+    await service.editMeal({
+      id: mealId,
+      type: 'bottle',
+      date: DateTime.fromISO('2021-01-01').toUTC(),
+    });
+
+    const editedMeal = await service.getMealById(mealId);
+
+    expect(editedMeal?.size).toEqual(meal?.size);
+  });
+
   it('should delete a meal', async () => {
     const mealId = await service.addMeal({
       type: 'bottle',

@@ -426,6 +426,25 @@ describe('MealController (e2e)', () => {
         .expect(400);
     });
 
+    it('should return 400 when size is not valid', async () => {
+      const mealResponse = await request(app.getHttpServer())
+        .post(`/childs/${childId}/meals`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          type: 'breast',
+        });
+
+      const mealId = mealResponse.body.id;
+
+      return request(app.getHttpServer())
+        .patch(`/childs/${childId}/meals/${mealId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          size: 'invalid',
+        })
+        .expect(400);
+    });
+
     it('should return 404 when child does not exist', () => {
       return request(app.getHttpServer())
         .patch(`/childs/${faker.string.uuid()}/meals/${faker.string.uuid()}`)
