@@ -74,6 +74,10 @@ export class MealService {
       newEntity['date'] = editMealDto.date;
     }
 
+    if (editMealDto.size) {
+      newEntity['size'] = editMealDto.size;
+    }
+
     await this.mealRepository.update(meal.id, newEntity);
   }
 

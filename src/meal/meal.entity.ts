@@ -18,6 +18,9 @@ export class Meal {
   @Column()
   type: string;
 
+  @Column({ nullable: true })
+  size?: string;
+
   @ManyToOne(() => Child)
   child: Promise<Child>;
 

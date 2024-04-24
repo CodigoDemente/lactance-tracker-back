@@ -6,6 +6,7 @@ export function stubMeal(id?: string): Meal {
   meal.id = id || '1';
   meal.type = 'bottle';
   meal.childId = '1';
+  meal.size = 's';
   meal.date = DateTime.utc();
   meal.createdAt = DateTime.utc();
   meal.updatedAt = DateTime.utc();

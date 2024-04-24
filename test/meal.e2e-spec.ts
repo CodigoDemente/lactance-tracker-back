@@ -426,6 +426,87 @@ describe('MealController (e2e)', () => {
         .expect(400);
     });
 
+    it('should edit size of a meal', async () => {
+      const mealResponse = await request(app.getHttpServer())
+        .post(`/childs/${childId}/meals`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          type: 'bottle',
+        });
+
+      const mealId = mealResponse.body.id;
+
+      return request(app.getHttpServer())
+        .patch(`/childs/${childId}/meals/${mealId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          size: 's',
+        })
+        .expect(200);
+    });
+
+    it('should ignore case when editing size of a meal', async () => {
+      const mealResponse = await request(app.getHttpServer())
+        .post(`/childs/${childId}/meals`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          type: 'bottle',
+        });
+
+      const mealId = mealResponse.body.id;
+
+      return request(app.getHttpServer())
+        .patch(`/childs/${childId}/meals/${mealId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          size: 'S',
+        })
+        .expect(200);
+    });
+
+    it('should return the size of a meal when requested after editing', async () => {
+      const mealResponse = await request(app.getHttpServer())
+        .post(`/childs/${childId}/meals`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          type: 'bottle',
+        });
+
+      const mealId = mealResponse.body.id;
+
+      await request(app.getHttpServer())
+        .patch(`/childs/${childId}/meals/${mealId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          size: 's',
+        });
+
+      const updatedMealResponse = await request(app.getHttpServer())
+        .get(`/childs/${childId}/meals/${mealId}`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(updatedMealResponse.body.size).toBe('s');
+    });
+
+    it('should return 400 when size is not valid', async () => {
+      const mealResponse = await request(app.getHttpServer())
+        .post(`/childs/${childId}/meals`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          type: 'breast',
+        });
+
+      const mealId = mealResponse.body.id;
+
+      return request(app.getHttpServer())
+        .patch(`/childs/${childId}/meals/${mealId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          size: 'invalid',
+        })
+        .expect(400);
+    });
+
     it('should return 404 when child does not exist', () => {
       return request(app.getHttpServer())
         .patch(`/childs/${faker.string.uuid()}/meals/${faker.string.uuid()}`)

@@ -91,6 +91,7 @@ describe('MealController', () => {
     expect(returnedMeal).toEqual({
       id: meal.id,
       type: meal.type,
+      size: meal.size,
       date: meal.date.toISO(),
       childId: meal.childId,
     });
@@ -129,6 +130,19 @@ describe('MealController', () => {
     expect(editMealSpy).toHaveBeenCalledWith({
       id: '1',
       date,
+    });
+  });
+
+  it('should edit meal with size', async () => {
+    const editMealSpy = jest.spyOn(service, 'editMeal').mockResolvedValueOnce();
+
+    await controller.editMeal('1', {
+      size: 's',
+    });
+
+    expect(editMealSpy).toHaveBeenCalledWith({
+      id: '1',
+      size: 's',
     });
   });
 
@@ -191,6 +205,7 @@ describe('MealController', () => {
         type: meal.type,
         date: meal.date.toISO(),
         childId: meal.childId,
+        size: meal.size,
       },
     ]);
   });

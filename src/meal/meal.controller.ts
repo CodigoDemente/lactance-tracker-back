@@ -62,11 +62,12 @@ export class MealController {
     @Param('mealId', ParseUUIDPipe) mealId: string,
     @Body() createMealDto: EditMealAPIDto,
   ) {
-    if (createMealDto.type || createMealDto.date) {
+    if (createMealDto.type || createMealDto.date || createMealDto.size) {
       return await this.mealService.editMeal({
         id: mealId,
         date: createMealDto.date,
         type: createMealDto.type,
+        size: createMealDto.size,
       });
     } else {
       throw new BadRequestException({
